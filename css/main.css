@@ -1,0 +1,505 @@
+:root{
+  --bg:#0d0d0f;
+  --panel:#141418;
+  --elev:#1a1a21;
+  --muted:#a4a6ad;
+  --text:#f5f6fb;
+  --acc:#6c7bff;
+  --acc-2:#ff6cc6;
+  --radius:16px;
+  --shadow:0 10px 30px rgba(0,0,0,.3);
+}
+html[data-theme="light"]{
+  --bg:#f7f8fb;
+  --panel:#ffffff;
+  --elev:#f1f3f8;
+  --text:#121318;
+  --muted:#5f6471;
+  --acc:#5b6cff;
+  --acc-2:#ff63b9;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 800px at 10% -20%, rgba(108,123,255,.15), transparent 60%),
+    radial-gradient(1000px 700px at 100% 10%, rgba(255,108,198,.12), transparent 60%),
+    var(--bg);
+  line-height:1.6;
+}
+html[data-theme="light"] body{
+  background:
+    radial-gradient(1200px 800px at 10% -20%, rgba(91,108,255,.10), transparent 60%),
+    radial-gradient(1000px 700px at 100% 10%, rgba(255,99,185,.10), transparent 60%),
+    var(--bg);
+}
+img{max-width:100%;height:auto;display:block;border-radius:12px}
+.container{width:min(1100px, 92%); margin:0 auto}
+.hidden{display:none}
+
+.site-header{
+  position:sticky; top:0; z-index:20;
+  background:rgba(13,13,15,.6);
+  backdrop-filter: blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 4vw;
+}
+html[data-theme="light"] .site-header,
+html[data-theme="light"] .site-footer{
+  background:rgba(255,255,255,.6);
+  border-color:rgba(17,17,17,.08);
+}
+.logo{
+  color:var(--text); text-decoration:none; font-weight:800; letter-spacing:.5px;
+  font-size:1.1rem;
+}
+.header-actions{display:flex; align-items:center; gap:10px}
+.theme-toggle{
+  border:1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.06);
+  color:var(--text); border-radius:999px; padding:8px 10px; cursor:pointer;
+  display:inline-flex; align-items:center; gap:6px
+}
+html[data-theme="light"] .theme-toggle{border-color:rgba(0,0,0,.12); background:rgba(0,0,0,.04)}
+.theme-toggle .sun{display:none}
+html[data-theme="light"] .theme-toggle .sun{display:inline}
+html[data-theme="light"] .theme-toggle .moon{display:none}
+
+.site-nav{display:flex; gap:18px; align-items:center}
+.site-nav a{color:var(--text); text-decoration:none; opacity:.9}
+.site-nav a:hover{opacity:1}
+.site-nav .cta{
+  background:linear-gradient(135deg, var(--acc), var(--acc-2));
+  padding:10px 14px; border-radius:999px; color:#fff !important; font-weight:600
+}
+.nav-toggle{display:none; background:none; border:0; color:var(--text)}
+.nav-toggle span{display:block; width:24px; height:2px; background:var(--text); margin:5px 0; border-radius:2px}
+
+.hero{position:relative; min-height:80dvh; display:grid; place-items:center; overflow:hidden}
+.hero-bg{position:absolute; inset:0; will-change: transform}
+.hero-bg img, .hero-bg video{width:100%; height:100%; object-fit:cover; filter:brightness(.6)}
+.hero-overlay{position:absolute; inset:0; background: radial-gradient(600px 400px at 50% 70%, rgba(108,123,255,.15), transparent 70%)}
+.hero-content{position:relative; text-align:center}
+.hero h1{font-size: clamp(2.2rem, 6vw, 4rem); margin:.2em 0}
+.subtitle{color:var(--muted); margin:0 0 1.2rem}
+.hero-actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+
+.btn{
+  position:relative;
+  border:1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.02);
+  color:var(--text); text-decoration:none;
+  padding:12px 18px; border-radius:12px; font-weight:600; display:inline-flex; gap:10px; align-items:center;
+  transition:transform .15s ease, box-shadow .15s ease
+}
+.btn.primary{border:none; background:linear-gradient(135deg, var(--acc), var(--acc-2)); color:#fff}
+.btn.ghost{background:transparent}
+.btn:hover{transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,.2)}
+.btn::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(100px 60px at var(--mx,50%) -20%, rgba(255,255,255,.25), transparent 70%);
+  opacity:0; transition:opacity .2s ease
+}
+.btn:hover::after{opacity:.25}
+
+.socials{display:flex; gap:14px; justify-content:center; margin-top:18px}
+.socials a{color:#fff; opacity:.8}
+.socials a:hover{opacity:1}
+
+.section{padding:64px 0}
+.section-head{margin-bottom:22px}
+.section-head h2{font-size: clamp(1.5rem, 3vw, 2rem); margin:0 0 6px}
+.section-head p{color:var(--muted); margin:0}
+
+.music-card{
+  display:grid; grid-template-columns: 160px 1fr; gap:18px;
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius);
+  padding:16px; box-shadow: var(--shadow);
+}
+.music-card .cover{aspect-ratio:1 / 1; object-fit:cover}
+.music-content h3{margin:.2rem 0 .4rem}
+.music-content .muted{color:var(--muted); margin:.2rem 0 .8rem}
+.countdown{display:flex; gap:16px; margin:.6rem 0 1rem}
+.countdown div{background:var(--elev); border-radius:10px; padding:8px 10px; text-align:center; min-width:64px}
+.countdown span{font-size:1.2rem; font-weight:700; display:block}
+.music-actions{display:flex; gap:10px; flex-wrap:wrap}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap:12px;
+}
+.grid-item{grid-column: span 4; position: relative; border-radius: 12px; overflow: hidden; cursor:zoom-in; transition:transform .2s, box-shadow .2s, border-color .2s; border:1px solid rgba(255,255,255,.08)}
+.grid-item:hover{transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,.35); border-color:rgba(255,255,255,.18)}
+
+@media (max-width: 900px){
+  .grid-item{grid-column: span 6}
+  .music-card{grid-template-columns: 1fr}
+}
+@media (max-width: 560px){
+  .grid-item{grid-column: span 12}
+  .site-nav{display:none; position:absolute; top:58px; right:4vw; background:var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px; flex-direction:column; gap:10px}
+  .nav-toggle{display:block}
+  .site-nav.open{display:flex}
+}
+.ratio-1-1 {aspect-ratio: 1 / 1;}
+.ratio-3-4 {aspect-ratio: 3 / 4;}
+.ratio-4-5 {aspect-ratio: 4 / 6;}
+.ratio-16-9 {aspect-ratio: 16 / 9;}
+
+.grid-item img{
+  position: absolute; 
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: 12px;
+}
+
+.lightbox{position:fixed; inset:0; background:rgba(0,0,0,.8); display:none; align-items:center; justify-content:center; z-index:50}
+.lightbox img{max-width:90vw; max-height:86vh; border-radius:12px}
+.lightbox.open{display:flex}
+.lightbox-close{
+  position:absolute; top:20px; right:20px; font-size:32px; line-height:1;
+  border:0; background:transparent; color:#fff; cursor:pointer
+}
+.lightbox-prev,.lightbox-next{
+  position:absolute; top:50%; transform:translateY(-50%);
+  background:rgba(255,255,255,.12); border:0; color:#fff; font-size:32px; line-height:1;
+  width:42px; height:42px; border-radius:50%; cursor:pointer
+}
+.lightbox-prev{left:18px}
+.lightbox-next{right:18px}
+.lightbox-prev:hover,.lightbox-next:hover{background:rgba(255,255,255,.2)}
+
+.about{display:grid; grid-template-columns: 1.2fr .8fr; gap:24px; align-items:center}
+.about-text p{color:#eaeaf1}
+.about-text p{color:#eaeaf1}
+html[data-theme="light"] .about-text p{color:#2a2d36}
+.stats{list-style:none; margin:14px 0; padding:0; display:flex; gap:16px; flex-wrap:wrap}
+.stats li{background: var(--elev); border:1px solid rgba(255,255,255,.06); padding:14px 16px; border-radius:12px; text-align:center}
+.stats strong{display:block; font-size:1.1rem}
+.stats span{color:var(--muted); font-size:.85rem}
+.about-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
+@media (max-width: 900px){
+  .about{grid-template-columns: 1fr}
+}
+
+.form{
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.08);
+  padding:18px; border-radius:16px; box-shadow: var(--shadow);
+}
+.form-row{display:flex; gap:12px; flex-wrap:wrap}
+.form-row > *{flex:1}
+.form label{display:block; font-weight:600; margin-bottom:8px}
+.form input,.form select,.form textarea{
+  width:100%; border-radius:10px; border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.02); color:var(--text); padding:10px 12px; outline:none
+}
+.form input:focus,.form select:focus,.form textarea:focus{border-color:var(--acc)}
+.form button{margin-top:10px}
+.form-status{color:var(--muted); margin-top:8px}
+
+.alt-contact{margin-top:12px; color:var(--muted)}
+.alt-contact a{color:#fff}
+
+.site-footer{
+  border-top:1px solid rgba(255,255,255,.08);
+  background:rgba(13,13,15,.4); backdrop-filter: blur(8px)
+}
+.footer-inner{padding:18px 4vw; display:flex; align-items:center; justify-content:space-between}
+.footer-nav{display:flex; gap:12px}
+.footer-nav a{color:var(--muted); text-decoration:none}
+.footer-nav a:hover{color:#fff}
+
+/* Reveal on scroll */
+.reveal{ opacity:1; transform: translateY(14px) scale(.98); transition: opacity .6s ease, transform .6s ease}
+.reveal.in-view{opacity:1; transform:none}
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1; transform:none}
+  html{scroll-behavior:auto}
+}
+/* === Contact form overrides (improved contrast + responsive layout) === */
+.form{
+  background:#f9fafb;                 /* subtle panel so fields stand out */
+  border:1px solid #e5e7eb;
+  padding:20px; border-radius:12px; box-shadow: 0 8px 28px rgba(0,0,0,.06);
+}
+
+/* Responsive grid: 2 columns on wide screens, stacks on small screens */
+.form-row{
+  display:grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap:14px;
+}
+
+/* Clear labels */
+.form label{
+  display:block;
+  font-weight:600;
+  color:#111827;
+  margin-bottom:8px;
+}
+
+/* Inputs/selects/textarea: stronger contrast + clear focus ring */
+.form input,
+.form select,
+.form textarea{
+  width:100%;
+  background:#ffffff;
+  color:#111827;
+  border:1.5px solid #d1d5db;
+  border-radius:12px;
+  padding:12px 14px;
+  line-height:1.4;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  -webkit-appearance:none; appearance:none;
+}
+
+.form input::placeholder,
+.form textarea::placeholder{ color:#94a3b8 }
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus{
+  outline:none;
+  border-color:#0a0b0d;                       /* crisp focus border */
+  box-shadow:0 0 0 3px rgba(17,24,39,.12);    /* soft focus ring */
+  background:#fff;
+}
+
+/* Consistent select arrow (works in Safari/Chrome/Firefox) */
+.form select{
+  background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23111827" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat:no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 16px;
+  padding-right: 40px;
+}
+
+/* Textarea sizing */
+.form textarea{ min-height:120px; resize:vertical }
+
+/* Small screens: a bit tighter padding */
+@media (max-width: 560px){
+  .form{ padding:16px }
+}
+/* === End contact form overrides === */
+/* === Contact form overrides (improved contrast + responsive layout in LIGHT MODE) === */
+/* Applies only when your <html> has data-theme="light" (as in your current build). */
+html[data-theme="light"] .form{
+  background:#f9fafb;                 /* subtle panel so fields stand out */
+  border:1px solid #e5e7eb;
+  padding:20px; border-radius:12px; box-shadow: 0 8px 28px rgba(0,0,0,.06);
+}
+
+/* Responsive grid: 2 columns on wide screens, stacks on small screens */
+html[data-theme="light"] .form-row{
+  display:grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap:14px;
+}
+
+/* Clear labels */
+html[data-theme="light"] .form label{
+  display:block;
+  font-weight:600;
+  color:#111827;
+  margin-bottom:8px;
+}
+
+/* Inputs/selects/textarea: stronger contrast + clear focus ring */
+html[data-theme="light"] .form input,
+html[data-theme="light"] .form select,
+html[data-theme="light"] .form textarea{
+  width:100%;
+  background:#ffffff;
+  color:#111827;
+  border:1.5px solid #182538;
+  border-radius:12px;
+  padding:12px 14px;
+  line-height:1.4;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  -webkit-appearance:none; appearance:none;
+}
+
+html[data-theme="light"] .form input::placeholder,
+html[data-theme="light"] .form textarea::placeholder{ color:#94a3b8 }
+
+html[data-theme="light"] .form input:focus,
+html[data-theme="light"] .form select:focus,
+html[data-theme="light"] .form textarea:focus{
+  outline:none;
+  border-color:#0a0b0d;                       /* crisp focus border */
+  box-shadow:0 0 0 3px rgba(17,24,39,.12);    /* soft focus ring */
+  background:#fff;
+}
+
+/* Consistent select arrow (works in Safari/Chrome/Firefox) */
+html[data-theme="light"] .form select{
+  background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23111827" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat:no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 16px;
+  padding-right: 40px;
+}
+
+/* Textarea sizing */
+html[data-theme="light"] .form textarea{ min-height:120px; resize:vertical }
+
+/* Small screens: a bit tighter padding */
+@media (max-width: 560px){
+  html[data-theme="light"] .form{ padding:16px }
+}
+/* === End contact form overrides === */
+/* === Dark mode: restore older form visuals (keep responsive grid) === */
+html[data-theme="dark"] .form{
+  background:#111418;                 /* darker panel */
+  border:1px solid #2b2f35;
+  padding:20px; border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+html[data-theme="dark"] .form label{
+  color:#e5e7eb;                      /* readable labels on dark */
+}
+
+/* Keep the new responsive grid layout in dark mode too */
+html[data-theme="dark"] .form-row{
+  display:grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap:14px;
+}
+
+/* Inputs/selects/textarea: older dark visuals */
+html[data-theme="dark"] .form input,
+html[data-theme="dark"] .form select,
+html[data-theme="dark"] .form textarea{
+  width:100%;
+  background:#0f1115;                 /* dark field background */
+  color:#e5e7eb;
+  border:1.5px solid #2f3540;         /* subtle border */
+  border-radius:12px;
+  padding:12px 14px;
+  line-height:1.4;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  -webkit-appearance:none; appearance:none;
+}
+
+html[data-theme="dark"] .form input::placeholder,
+html[data-theme="dark"] .form textarea::placeholder{ color:#9aa3b2 }
+
+html[data-theme="dark"] .form input:focus,
+html[data-theme="dark"] .form select:focus,
+html[data-theme="dark"] .form textarea:focus{
+  outline:none;
+  border-color:#6c7bff;               /* subtle accent focus */
+  box-shadow:0 0 0 3px rgba(108,123,255,.18);
+  background:#0f1115;
+}
+
+/* Select arrow in dark mode */
+html[data-theme="dark"] .form select{
+  background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23cfd6e4" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat:no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 16px;
+  padding-right: 40px;
+}
+
+/* Slightly tighter padding on very small screens */
+@media (max-width: 560px){
+  html[data-theme="dark"] .form{ padding:16px }
+}
+/* === End dark mode form visuals === */
+/* === Light theme: ensure contact links are visible on white === */
+html[data-theme="light"] .email-direct,
+html[data-theme="light"] .alt-contact {
+  color:#111827; /* readable text for the line labels */
+}
+
+html[data-theme="light"] .email-direct a,
+html[data-theme="light"] .alt-contact a {
+  color:#0a0b0d !important;   /* force dark link color on light bg */
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+html[data-theme="light"] .email-direct a:visited,
+html[data-theme="light"] .alt-contact a:visited {
+  color:#0a0b0d !important;   /* keep visible after visit */
+}
+
+html[data-theme="light"] .email-direct a:hover,
+html[data-theme="light"] .alt-contact a:hover {
+  color:#111111;               /* slightly darker on hover */
+  text-decoration: underline;
+}
+
+html[data-theme="light"] .email-direct a:focus,
+html[data-theme="light"] .alt-contact a:focus {
+  outline: 2px solid #0a0b0d; /* keyboard focus visible */
+  outline-offset: 2px;
+}
+/* === End light theme contact link overrides === */
+/* === Light theme: ensure hero + CTA text are clearly visible === */
+
+/* Hero: big name and subtitle readable over bright images */
+html[data-theme="light"] .hero-content h1{
+  color:#76466a; /* deep charcoal */
+  text-shadow: 0 2px 8px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.25);
+}
+html[data-theme="light"] .hero .subtitle{
+  color:#94989d; /* slate-800 */
+  text-shadow: 0 1px 2px rgba(0,0,0,.20);
+}
+
+/* Non-primary buttons (e.g., Booking / Contact ghost button) */
+html[data-theme="light"] .btn:not(.primary){
+  color:#0a0b0d;
+  background:#ffffff;
+  border-color: rgba(0,0,0,.18);
+}
+
+/* Section headings/subtext (covers Contact heading + line under it) */
+html[data-theme="light"] .section-head h2{ color:#0a0b0d; }
+html[data-theme="light"] .section-head p{ color:#374151; } /* slate-700 */
+
+.about-text.reveal:not(.in-view),
+.about-photo.reveal:not(.in-view),
+.about.reveal:not(.in-view){
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+html[data-theme="light"] .about-text h2 {color: #0a0b0d;}
+html[data-theme="light"] .about-text p {color: #1f2937;}
+html[data-theme="light"] .stats strong {color: #0a0b0d;}
+html[data-theme="light"] .stats span {color: #6b7280;}
+
+html[data-theme="dark"] .about-text h2 {color: #f6f6fb;}
+html[data-theme="dark"] .about-text p {color: #e5e7eb;}
+html[data-theme="dark"] .stats strong {color: #f5f6fb;}
+html[data-theme="dark"] .stats h2 {color: #a9afba;}
+
+html[data-theme="light"] .socials a{
+  color: #0a0b0d !important;
+  opacity: 0.95;
+  text-decoration: none;
+}
+
+html[data-theme="light"] .socials a:hover{
+  color: #111111 !important;
+  text-decoration: underline;
+}
+
+html[data-theme="light"] .socials svg{
+  color: #0a0b0d;
+}
