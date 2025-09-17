@@ -58,7 +58,7 @@
         <h2>Photoshoots</h2>
         <p>Editorial and portrait selections.</p>
       </div>
-      <div class="grid">
+      <div class="grid" id="grid-photoshoots">
         <!-- Replace filenames with your own; you can add/remove figures freely -->
         <figure class="grid-item ratio-4-5 reveal">
           <img src="assets/images/photoshoots/ps1.png" alt="Photoshoot 1"
@@ -130,7 +130,7 @@
         <h2>Brand Shoots</h2>
         <p>Campaign and collaboration highlights.</p>
       </div>
-      <div class="grid">
+      <div class="grid" id="grid-brand">
         <figure class="grid-item ratio-4-5 reveal">
           <img src="assets/images/brand-shoots/bs1.png" alt="Brand shoot 1"
                loading="lazy"
@@ -214,7 +214,54 @@
       </div>
     </div>
   </footer>
+<script>
+  (async function () {
+    try {
+      const res = await fetch('/data/gallery.json?v=1', { cache: 'no-store' });
+      const data = await res.json();
 
-  <script src="js/main.js?v=2" defer></script>
+      // Sort by optional 'order'
+      data.photos.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+      const card = p => `
+      <figure class="grid-item ratio-4-5 reveal">
+        <img src="${p.src}" alt="${p.alt || ''}" loading="lazy"
+             sizes="(max-width:560px) 100vw, (max-width:900px) 50vw, 33vw" />
+        ${p.caption ? `<figcaption>${p.caption}</figcaption>` : ''}
+      </figure>`;
+
+      const ps = data.photos.filter(p => p.group === 'photoshoots');
+      const bs = data.photos.filter(p => p.group === 'brand');
+
+      const psGrid = document.getElementById('grid-photoshoots');
+      const bsGrid = document.getElementById('grid-brand');
+      if (psGrid) psGrid.innerHTML = ps.map(card).join('');
+      if (bsGrid) bsGrid.innerHTML = bs.map(card).join('');
+
+      // Lightbox for injected images (local to this page)
+      const imgs = Array.from(document.querySelectorAll('.grid-item img'));
+      const box = document.getElementById('lightbox');
+      const boxImg = document.getElementById('lightbox-img');
+      const prev = box?.querySelector('.lightbox-prev');
+      const next = box?.querySelector('.lightbox-next');
+      const closeBtn = box?.querySelector('.lightbox-close');
+      let idx = 0;
+      function open(i) { idx = i; const el = imgs[idx]; boxImg.src = el.src; boxImg.alt = el.alt || ''; box.classList.add('open'); box.setAttribute('aria-hidden', 'false'); }
+      function close() { box.classList.remove('open'); box.setAttribute('aria-hidden', 'true'); }
+      function step(d) { idx = (idx + d + imgs.length) % imgs.length; const el = imgs[idx]; boxImg.src = el.src; boxImg.alt = el.alt || ''; }
+      imgs.forEach((img, i) => img.addEventListener('click', () => open(i)));
+      closeBtn?.addEventListener('click', close);
+      box?.addEventListener('click', (e) => { if (e.target === box) close(); });
+      prev?.addEventListener('click', () => step(-1));
+      next?.addEventListener('click', () => step(1));
+
+      // Ensure reveal animation doesn't keep them hidden if observer ran early
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+    } catch (e) {
+      console.error('Failed to load gallery.json', e);
+    }
+  })();
+</script>
+<script src="js/main.js?v=2" defer></script>
 </body>
 </html>

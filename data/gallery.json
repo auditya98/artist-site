@@ -1,0 +1,18 @@
+{
+  "photos": [
+    {
+      "group": "photoshoots",
+      "src": "/assets/images/photoshoots/ps1.jpg",
+      "alt": "Photoshoot 1",
+      "caption": "Photoshoot 1",
+      "order": 1
+    },
+    {
+      "group": "brand",
+      "src": "/assets/images/brand-shoots/bs1.jpg",
+      "alt": "Brand shoot 1",
+      "caption": "Brand shoot 1",
+      "order": 1
+    }
+  ]
+}
