@@ -5,7 +5,9 @@ backend:
 media_folder: "assets/images"
 public_folder: "/assets/images"
 
-publish_mode: editorial_workflow  # optional: adds draft/review/publish flow
+media_library:
+  config:
+    choose_dir: true
 
 collections:
   - name: "gallery"
@@ -18,9 +20,15 @@ collections:
           - label: Photos
             name: photos
             widget: list
+            summary: "{{fields.group}} - {{fields.caption}}"
             fields:
-              - { label: Group, name: group, widget: select, options: ["photoshoots","brand"] }
-              - { label: Image, name: src, widget: image }
+              - { label: Group, name: group, widget: select, options: ["photoshoots","brand"], default: "photoshoots"}
+              - label: Image
+                name: src
+                widget: image
+                media_folder: "assets/images"
+                public_folder: "assets/images"
+
               - { label: Alt text, name: alt, widget: string, required: false }
               - { label: Caption, name: caption, widget: string, required: false }
               - { label: Order, name: order, widget: number, required: false, min: 0 }
