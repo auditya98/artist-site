@@ -5,10 +5,6 @@ backend:
 media_folder: "assets/images"
 public_folder: "/assets/images"
 
-media_library:
-  config:
-    choose_dir: true
-
 collections:
   - name: "gallery"
     label: "Gallery"
@@ -27,7 +23,7 @@ collections:
                 name: src
                 widget: image
                 media_folder: "assets/images"
-                public_folder: "assets/images"
+                public_folder: "/assets/images"
 
               - { label: Alt text, name: alt, widget: string, required: false }
               - { label: Caption, name: caption, widget: string, required: false }
