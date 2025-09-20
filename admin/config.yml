@@ -2,8 +2,8 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "assets/images"
-public_folder: "/assets/images"
+media_folder: "assets/gallery"
+public_folder: "/assets/gallery"
 
 collections:
   - name: "gallery"
@@ -22,8 +22,8 @@ collections:
               - label: Image
                 name: src
                 widget: image
-                media_folder: "assets/images"
-                public_folder: "/assets/images"
+                media_folder: "assets/gallery"
+                public_folder: "/assets/gallery"
 
               - { label: Alt text, name: alt, widget: string, required: false }
               - { label: Caption, name: caption, widget: string, required: false }
