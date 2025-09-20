@@ -503,3 +503,8 @@ html[data-theme="light"] .socials a:hover{
 html[data-theme="light"] .socials svg{
   color: #0a0b0d;
 }
+
+.grid[data-hydrated="false"]{
+  visibility: hidden;
+  min-height: 200px;
+}

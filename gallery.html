@@ -58,7 +58,7 @@
         <h2>Photoshoots</h2>
         <p>Editorial and portrait selections.</p>
       </div>
-      <div class="grid" id="grid-photoshoots">
+      <div class="grid" id="grid-photoshoots" data-hydrated="false">
         <!-- Replace filenames with your own; you can add/remove figures freely -->
         <figure class="grid-item ratio-4-5 reveal">
           <img src="assets/images/photoshoots/ps1.png" alt="Photoshoot 1"
@@ -130,7 +130,7 @@
         <h2>Brand Shoots</h2>
         <p>Campaign and collaboration highlights.</p>
       </div>
-      <div class="grid" id="grid-brand">
+      <div class="grid" id="grid-brand" data-hydrated="false">
         <figure class="grid-item ratio-4-5 reveal">
           <img src="assets/images/brand-shoots/bs1.png" alt="Brand shoot 1"
                loading="lazy"
@@ -270,9 +270,11 @@
       // Fallback: if both empty (unexpected), show everything under Photoshoots
       if (psGrid && (ps.length || (!ps.length && !bs.length))) {
         psGrid.innerHTML = (ps.length ? ps : data.photos).map(card).join("");
+        psGrid.setAttribute("data-hydrated", "true");
       }
       if (bsGrid && bs.length) {
         bsGrid.innerHTML = bs.map(card).join("");
+        psGrid.setAttribute("data-hydrated", "true");
       }
 
       // Lightbox for injected images (local to this page)
