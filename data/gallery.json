@@ -13,6 +13,10 @@
       "alt": "Brand shoot 1",
       "caption": "Brand shoot 1",
       "order": 1
+    },
+    {
+      "group": "photoshoots",
+      "src": "/assets/gallery/p6.png"
     }
   ]
 }
