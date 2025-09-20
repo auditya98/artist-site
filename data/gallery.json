@@ -1,8 +1,8 @@
 {
   "photos": [
     {
-      "group": "brand", 
-      "src": "../assets/gallery/bs9.png"
+      "group": "brand",
+      "src": "/assets/gallery/bs9.png"
     }
   ]
 }
