@@ -217,48 +217,120 @@
 <script>
   (async function () {
     try {
-      const res = await fetch('/data/gallery.json?v=1', { cache: 'no-store' });
+      // Always fetch the freshest JSON (avoid CDN/browser caches)
+      const url = "/data/gallery.json?v=" + Date.now();
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) {
+        console.error("Failed to fetch gallery.json", res.status, res.statusText);
+        return;
+      }
       const data = await res.json();
 
-      // Sort by optional 'order'
+      // Normalize src paths and group values
+      (data.photos || []).forEach((p) => {
+        // Normalize group to one of: 'photoshoots' or 'brand'
+        const g = (p.group || "").toLowerCase().trim();
+        if (g.includes("photo")) p.group = "photoshoots";
+        else if (g.includes("brand")) p.group = "brand";
+        else p.group = "brand"; // fallback so items are not lost
+
+        // Normalize src: ensure leading slash, strip ./ and duplicate slashes
+        if (p.src) {
+          let s = p.src.trim();
+          s = s.replace(/^\.\//, "").replace(/^\./, "");
+          if (!s.startsWith("/")) s = "/" + s;
+          s = s.replace(/\/{2,}/g, "/");
+          p.src = s;
+        }
+      });
+
+      // Sort (lowest order first)
       data.photos.sort((a, b) => (a.order || 0) - (b.order || 0));
 
-      const card = p => `
-      <figure class="grid-item ratio-4-5 reveal">
-        <img src="${p.src}" alt="${p.alt || ''}" loading="lazy"
-             sizes="(max-width:560px) 100vw, (max-width:900px) 50vw, 33vw" />
-        ${p.caption ? `<figcaption>${p.caption}</figcaption>` : ''}
-      </figure>`;
+      const card = (p) => `
+        <figure class="grid-item ratio-4-5 reveal">
+          <img
+            src="${p.src}"
+            alt="${p.alt || ""}"
+            loading="lazy"
+            sizes="(max-width:560px) 100vw, (max-width:900px) 50vw, 33vw"
+          />
+          ${p.caption ? `<figcaption>${p.caption}</figcaption>` : ""}
+        </figure>
+      `;
 
-      const ps = data.photos.filter(p => p.group === 'photoshoots');
-      const bs = data.photos.filter(p => p.group === 'brand');
+      // Split into sections by normalized group
+      const ps = data.photos.filter((p) => p.group === "photoshoots");
+      const bs = data.photos.filter((p) => p.group === "brand");
 
-      const psGrid = document.getElementById('grid-photoshoots');
-      const bsGrid = document.getElementById('grid-brand');
-      if (psGrid) psGrid.innerHTML = ps.map(card).join('');
-      if (bsGrid) bsGrid.innerHTML = bs.map(card).join('');
+      // Insert into the two grids
+      const psGrid = document.getElementById("grid-photoshoots");
+      const bsGrid = document.getElementById("grid-brand");
+
+      // Fallback: if both empty (unexpected), show everything under Photoshoots
+      if (psGrid && (ps.length || (!ps.length && !bs.length))) {
+        psGrid.innerHTML = (ps.length ? ps : data.photos).map(card).join("");
+      }
+      if (bsGrid && bs.length) {
+        bsGrid.innerHTML = bs.map(card).join("");
+      }
 
       // Lightbox for injected images (local to this page)
-      const imgs = Array.from(document.querySelectorAll('.grid-item img'));
-      const box = document.getElementById('lightbox');
-      const boxImg = document.getElementById('lightbox-img');
-      const prev = box?.querySelector('.lightbox-prev');
-      const next = box?.querySelector('.lightbox-next');
-      const closeBtn = box?.querySelector('.lightbox-close');
-      let idx = 0;
-      function open(i) { idx = i; const el = imgs[idx]; boxImg.src = el.src; boxImg.alt = el.alt || ''; box.classList.add('open'); box.setAttribute('aria-hidden', 'false'); }
-      function close() { box.classList.remove('open'); box.setAttribute('aria-hidden', 'true'); }
-      function step(d) { idx = (idx + d + imgs.length) % imgs.length; const el = imgs[idx]; boxImg.src = el.src; boxImg.alt = el.alt || ''; }
-      imgs.forEach((img, i) => img.addEventListener('click', () => open(i)));
-      closeBtn?.addEventListener('click', close);
-      box?.addEventListener('click', (e) => { if (e.target === box) close(); });
-      prev?.addEventListener('click', () => step(-1));
-      next?.addEventListener('click', () => step(1));
+      const imgs = Array.from(document.querySelectorAll(".grid-item img"));
+      const box = document.getElementById("lightbox");
+      const boxImg = document.getElementById("lightbox-img");
+      const prev = box?.querySelector(".lightbox-prev");
+      const next = box?.querySelector(".lightbox-next");
+      const closeBtn = box?.querySelector(".lightbox-close");
 
-      // Ensure reveal animation doesn't keep them hidden if observer ran early
-      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+      let idx = 0;
+
+      function open(i) {
+        idx = i;
+        const el = imgs[idx];
+        boxImg.src = el.src;
+        boxImg.alt = el.alt || "";
+        box.classList.add("open");
+        box.setAttribute("aria-hidden", "false");
+      }
+
+      function close() {
+        box.classList.remove("open");
+        box.setAttribute("aria-hidden", "true");
+      }
+
+      function step(d) {
+        idx = (idx + d + imgs.length) % imgs.length;
+        const el = imgs[idx];
+        boxImg.src = el.src;
+        boxImg.alt = el.alt || "";
+      }
+
+      imgs.forEach((img, i) => img.addEventListener("click", () => open(i)));
+      closeBtn?.addEventListener("click", close);
+      box?.addEventListener("click", (e) => {
+        if (e.target === box) close();
+      });
+      prev?.addEventListener("click", () => step(-1));
+      next?.addEventListener("click", () => step(1));
+      window.addEventListener("keydown", (e) => {
+        if (!box.classList.contains("open")) return;
+        if (e.key === "Escape") close();
+        if (e.key === "ArrowLeft") step(-1);
+        if (e.key === "ArrowRight") step(1);
+      });
+
+      // Ensure reveal items aren’t left hidden
+      document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in-view"));
+
+      // Debug counts (optional): see matches in Console
+      console.log("Gallery loaded:", {
+        total: data.photos.length,
+        photoshoots: ps.length,
+        brand: bs.length
+      });
     } catch (e) {
-      console.error('Failed to load gallery.json', e);
+      console.error("Gallery load error", e);
     }
   })();
 </script>
