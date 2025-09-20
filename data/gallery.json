@@ -1,22 +1,3 @@
 {
-  "photos": [
-    {
-      "group": "photoshoots",
-      "src": "/assets/gallery/photoshoots/p3.png",
-      "alt": "Photoshoot 1",
-      "caption": "Photoshoot 1",
-      "order": 1
-    },
-    {
-      "group": "brand",
-      "src": "/assets/gallery/brand-shoots/bs1.png",
-      "alt": "Brand shoot 1",
-      "caption": "Brand shoot 1",
-      "order": 1
-    },
-    {
-      "group": "photoshoots",
-      "src": "/assets/gallery/p3.png"
-    }
-  ]
+  "photos": []
 }
