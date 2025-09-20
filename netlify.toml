@@ -22,9 +22,9 @@
   from = "/admin/*"
   to = "/admin/index.html"
   status = 200
-  #force = true
-  #[redirects.conditions]
-  #  Role = ["admin", "editor"]
+  force = true
+  [redirects.conditions]
+    Role = ["admin", "editor"]
 
 # Fallback for others: 404
 [[redirects]]
