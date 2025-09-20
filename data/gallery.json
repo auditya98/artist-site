@@ -2,7 +2,7 @@
   "photos": [
     {
       "group": "brand",
-      "src": "/assets/gallery/bs1.png"
+      "src": "../assets/gallery/bs9.png"
     }
   ]
 }
