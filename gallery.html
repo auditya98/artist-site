@@ -165,22 +165,46 @@
         </figure>
       `;
 
+      // Insert into the two grids
+      const psGrid = 
+      document.getElementById("grid-photoshoots") ||
+      document.querySelector("#photoshoots .grid");
+
+      const bsGrid = 
+      document.getElementById("grid-brand") ||
+      document.getElementById("grid-brand-shoots") ||
+      document.querySelector("#brand-shoots .grid");
+
         // Split into sections by normalized group
         const ps = items.filter((p) => p.group === "photoshoots");
         const bs = items.filter((p) => p.group === "brand");
 
-        // Insert into the two grids
-        const psGrid = document.getElementById("grid-photoshoots");
-        const bsGrid = document.getElementById("grid-brand");
+        
 
         // Fallback: if both empty (unexpected), show everything under Photoshoots
         if (psGrid) {
           psGrid.innerHTML = ps.map(card).join("");
           psGrid.setAttribute("data-hydrated", "true");
+          psGrid.style.visibility = "visible";
         }
         if (bsGrid) {
           bsGrid.innerHTML = bs.map(card).join("");
           psGrid.setAttribute("data-hydrated", "true");
+          bsGrid.style.visibility = "visible";
+        }
+
+        if(!psGrid && bsGrid && items.length  && !bs.length) {
+          // If only brand grid exists, show all items there
+          bsGrid.innerHTML = items.map(card).join("");
+          bsGrid.setAttribute("data-hydrated", "true");
+          bsGrid.style.visibility = "visible";
+        }
+
+        if(psGrid && !bsGrid && items.length && !ps.length) {
+          // If only photoshoots grid exists, show all items there
+          psGrid.innerHTML = items.map(card).join("");
+          psGrid.setAttribute("data-hydrated", "true");
+          psGrid.style.visibility = "visible";
         }
 
         // Lightbox for injected images (local to this page)
@@ -235,6 +259,8 @@
         console.error("Gallery load error", e);
         document.getElementById("grid-photoshoots")?.setAttribute("data-hydrated", "true")
         document.getElementById("grid-brand")?.setAttribute("data-hydrated", "true")
+        document.getElementById("grid-photoshoots")?.style && (document.getElementById("grid-photoshoots").style.visibility = "visible");
+        document.getElementById("grid-brand")?.style && (document.getElementById("grid-brand").style.visibility = "visible");
       }
     })();
   </script>
