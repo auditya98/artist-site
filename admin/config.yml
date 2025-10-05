@@ -22,7 +22,7 @@ collections:
               - label: "Image"
                 name: "src"
                 widget: "image"
-                media_folder: "assets/gallery/photoshoots"
+                media_folder: "/assets/gallery/photoshoots"
                 public_folder: "/assets/gallery/photoshoots"
               - { label: Alt text, name: alt, widget: string, required: false }
               - { label: Caption, name: caption, widget: string, required: false }
@@ -36,7 +36,7 @@ collections:
               - label: "Image"
                 name: "src"
                 widget: "image"
-                media_folder: "assets/gallery/brand-shoots"
+                media_folder: "/assets/gallery/brand-shoots"
                 public_folder: "/assets/gallery/brand-shoots"
               - { label: Alt text, name: alt, widget: string, required: false }
               - { label: Caption, name: caption, widget: string, required: false }
