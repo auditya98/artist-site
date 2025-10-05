@@ -119,7 +119,7 @@
         }) : [];
 
         // Normalize to an array
-        const items = [...psnew, ...bsnew, ...legacy];
+        let items = [...psnew, ...bsnew, ...legacy];
 
         // Helper: ensure path has the correct subfolder based on group if missing 
         function normalizePath(path) {
