@@ -110,15 +110,16 @@
         }
         const data = await res.json();
 
-        // Normalize to an array
-        const items = Array.isArray(data.photos) ? data.photos : Array.isArray(data) ? data : [];
+        const psnew = Array.isArray(data.photoshoots) ? data.photoshoots.map((x) => ({...x, group: "photoshoots"})) : [];
+        const bsnew = Array.isArray(data.brand) ? data.brand.map((x) => ({...x, group: "brand"})) : [];
+        
+        const legacy = Array.isArray(data.photos) ? data.photos.map((x) => {
+          const g = (x.group || "").toLowerCase();
+          return {...x, group: g.includes("photo") ? "photoshoots" : "brand"};
+        }) : [];
 
-        function normalizeGroup(g){
-          const x = (g || "").toLowerCase().trim();
-          if (x.includes("photo")) return "photoshoots";
-          if (x.includes("brand")) return "brand";
-          else return "brand"; // fallback so items are not lost
-        }
+        // Normalize to an array
+        const items = [...psnew, ...bsnew, ...legacy];
 
         // Helper: ensure path has the correct subfolder based on group if missing 
         function normalizePath(path) {
@@ -145,9 +146,10 @@
         }
 
         // Normalize src paths and group values
-        items.forEach((p) => {
-          p.group = normalizeGroup(p.group);
-          p.src = ensureSubFolder(p.src, p.group);
+        items = items.map((p) => {
+          const group = (p.group === "photoshoots") ? "photoshoots": "brand";
+          const src = ensureSubFolder(p.src, group);
+          return { ...p, group, src };
         });
 
         // Sort (lowest order first)
@@ -259,8 +261,6 @@
         console.error("Gallery load error", e);
         document.getElementById("grid-photoshoots")?.setAttribute("data-hydrated", "true")
         document.getElementById("grid-brand")?.setAttribute("data-hydrated", "true")
-        document.getElementById("grid-photoshoots")?.style && (document.getElementById("grid-photoshoots").style.visibility = "visible");
-        document.getElementById("grid-brand")?.style && (document.getElementById("grid-brand").style.visibility = "visible");
       }
     })();
   </script>

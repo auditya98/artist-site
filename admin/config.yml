@@ -14,13 +14,30 @@ collections:
         label: "Gallery Photos"
         name: "photos"
         fields:
-          - label: Photos
-            name: photos
+          - label: "Photoshoots"
+            name: "photoshoots"
             widget: list
-            summary: "{{fields.group}} - {{fields.caption}}"
+            summary: "PS - {{fields.caption}}"
             fields:
-              - { label: Group, name: group, widget: select, options: ["photoshoots","brand"], default: "photoshoots"}
-              - {label: Image, name: src, widget: image}
+              - label: "Image"
+                name: "src"
+                widget: "image"
+                media_folder: "assets/gallery/photoshoots"
+                public_folder: "/assets/gallery/photoshoots"
+              - { label: Alt text, name: alt, widget: string, required: false }
+              - { label: Caption, name: caption, widget: string, required: false }
+              - { label: Order, name: order, widget: number, required: false, min: 0 }
+
+          - label: "Brand"
+            name: "brand"
+            widget: list
+            summary: "Brand - {{fields.caption}}"
+            fields:
+              - label: "Image"
+                name: "src"
+                widget: "image"
+                media_folder: "assets/gallery/brand-shoots"
+                public_folder: "/assets/gallery/brand-shoots"
               - { label: Alt text, name: alt, widget: string, required: false }
               - { label: Caption, name: caption, widget: string, required: false }
               - { label: Order, name: order, widget: number, required: false, min: 0 }
