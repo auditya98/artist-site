@@ -23,6 +23,10 @@
     {
       "group": "brand",
       "src": "/assets/gallery/bs6.png"
+    },
+    {
+      "group": "brand",
+      "src": "/assets/gallery/bs1.png"
     }
   ]
 }
