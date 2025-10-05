@@ -256,7 +256,10 @@
         document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in-view"));
 
         // Debug counts (optional): see matches in Console
-        console.log("Gallery loaded:", { total: data.photos.length, photoshoots: ps.length, brand: bs.length});
+        console.log("Gallery loaded:", { 
+          total: items.length, 
+          photoshoots: ps.length, 
+          brand: bs.length});
       } catch (e) {
         console.error("Gallery load error", e);
         document.getElementById("grid-photoshoots")?.setAttribute("data-hydrated", "true")
