@@ -1,5 +1,9 @@
 {
-  "photoshoots": [],
+  "photoshoots": [
+    {
+      "src": "/assets/gallery/photoshoots/bs6.png"
+    }
+  ],
   "brand": [
     {
       "src": "/assets/gallery/brand-shoots/bs1.png"
