@@ -111,7 +111,7 @@
         const data = await res.json();
 
         // Normalize to an array
-        const itens = Array.isArray(data.photos) ? data.photos : Array.isArray(data) ? data : [];
+        const items = Array.isArray(data.photos) ? data.photos : Array.isArray(data) ? data : [];
 
         function normalizeGroup(g){
           const x = (g || "").toLowerCase().trim();
