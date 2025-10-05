@@ -4,6 +4,7 @@ backend:
 
 media_folder: "assets/gallery"
 public_folder: "/assets/gallery"
+media_folder_relative: false
 
 collections:
   - name: "gallery"
