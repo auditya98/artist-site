@@ -3,30 +3,6 @@
     {
       "group": "brand",
       "src": "/assets/gallery/bs1.png"
-    },
-    {
-      "group": "photoshoots",
-      "src": "/assets/gallery/p2.png"
-    },
-    {
-      "group": "brand",
-      "src": "/assets/gallery/p6.png"
-    },
-    {
-      "group": "brand",
-      "src": "/assets/gallery/p6.png"
-    },
-    {
-      "group": "photoshoots",
-      "src": "/assets/gallery/p2.png"
-    },
-    {
-      "group": "brand",
-      "src": "/assets/gallery/bs6.png"
-    },
-    {
-      "group": "brand",
-      "src": "/assets/gallery/bs1.png"
     }
   ]
 }
