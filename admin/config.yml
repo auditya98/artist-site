@@ -20,12 +20,7 @@ collections:
             summary: "{{fields.group}} - {{fields.caption}}"
             fields:
               - { label: Group, name: group, widget: select, options: ["photoshoots","brand"], default: "photoshoots"}
-              - label: Image
-                name: src
-                widget: image
-                media_folder: "assets/gallery"
-                public_folder: "/assets/gallery"
-
+              - {label: Image, name: src, widget: image}
               - { label: Alt text, name: alt, widget: string, required: false }
               - { label: Caption, name: caption, widget: string, required: false }
               - { label: Order, name: order, widget: number, required: false, min: 0 }
