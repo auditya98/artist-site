@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
@@ -24,10 +25,13 @@
   <!-- Fonts (same as index) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@500;700&display=swap"
+    rel="stylesheet" />
 
   <link rel="stylesheet" href="css/main.css?v=6" />
 </head>
+
 <body>
   <header class="site-header">
     <a class="logo" href="index.html#home">Rochelle Braganca</a>
@@ -83,48 +87,68 @@
     <div class="container footer-inner">
       <small>© <span id="year"></span> Rochelle Braganca</small>
       <div class="socials">
-        <a href="https://www.instagram.com/rbrz23queen" aria-label="Instagram" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.youtube.com/@rochellebraganca1502" aria-label="YouTube" target="_blank" rel="noopener">YouTube</a>
-        <a href="https://open.spotify.com/artist/7jfBZISj9VYM23MXneGQoz?si=rQ1zJKN-Q0e5VV5ao_rS9A" aria-label="Spotify" target="_blank" rel="noopener">Spotify</a>
+        <a href="https://www.instagram.com/rbrz23queen" aria-label="Instagram" target="_blank"
+          rel="noopener">Instagram</a>
+        <a href="https://www.youtube.com/@rochellebraganca1502" aria-label="YouTube" target="_blank"
+          rel="noopener">YouTube</a>
+        <a href="https://open.spotify.com/artist/7jfBZISj9VYM23MXneGQoz?si=rQ1zJKN-Q0e5VV5ao_rS9A" aria-label="Spotify"
+          target="_blank" rel="noopener">Spotify</a>
       </div>
     </div>
   </footer>
-<script>
-  (async function () {
-    try {
-      // Always fetch the freshest JSON (avoid CDN/browser caches)
-      const url = "/data/gallery.json?v=" + Date.now();
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) {
-        console.error("Failed to fetch gallery.json", res.status, res.statusText);
-        document.getElementById("grid-photoshoots")?.setAttribute("data-hydrated", "true")
-        document.getElementById("grid-brand")?.setAttribute("data-hydrated", "true")
-        return;
-      }
-      const data = await res.json();
-
-      // Normalize src paths and group values
-      (data.photos || []).forEach((p) => {
-        // Normalize group to one of: 'photoshoots' or 'brand'
-        const g = (p.group || "").toLowerCase().trim();
-        if (g.includes("photo")) p.group = "photoshoots";
-        else if (g.includes("brand")) p.group = "brand";
-        else p.group = "brand"; // fallback so items are not lost
-
-        // Normalize src: ensure leading slash, strip ./ and duplicate slashes
-        if (p.src) {
-          let s = p.src.trim();
-          s = s.replace(/^\.\//, "").replace(/^\./, "");
-          if (!s.startsWith("/")) s = "/" + s;
-          s = s.replace(/\/{2,}/g, "/");
-          p.src = s;
+  <script>
+    (async function () {
+      try {
+        // Always fetch the freshest JSON (avoid CDN/browser caches)
+        const url = "/data/gallery.json?v=" + Date.now();
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) {
+          console.error("Failed to fetch gallery.json", res.status, res.statusText);
+          document.getElementById("grid-photoshoots")?.setAttribute("data-hydrated", "true")
+          document.getElementById("grid-brand")?.setAttribute("data-hydrated", "true")
+          return;
         }
-      });
+        const data = await res.json();
 
-      // Sort (lowest order first)
-      data.photos.sort((a, b) => (a.order || 0) - (b.order || 0));
+        // Normalize to an array
+        const itens = Array.isArray(data.photos) ? data.photos : Array.isArray(data) ? data : [];
 
-      const card = (p) => `
+        // Helper: ensure path has the correct subfolder based on group if missing 
+        function fixPathByGroup(path, group) {
+          if (!path) return path;
+          let s = String(path).trim();
+          // Strip leading ./ or
+          s = s.replace(/^\.\//, "").replace(/^\./, "");
+          // Ensure leading slash 
+          if (!s.startsWith("/")) s = "/" + s;
+          // Collapse duplicate slashes 
+          s = s.replace(/\/{2,}/g, "/");
+
+          // If already under /assets/gallery/(photoshoots brand-shoots)/..., keep as-is 
+          const hasSubdir = /\/assets\/gallery\/(photoshoots|brand-shoots)\//i.test(s);
+
+          if (hasSubdir) {
+            const file = s.split("/").pop();
+            const folder = group === "photoshoots" ? "photoshoots" : "brand-shoots";
+            s = `/assets/gallery/${folder}/${file}`;
+          }
+          return s;
+        }
+        // Normalize src paths and group values
+        (data.photos || []).forEach((p) => {
+          // Normalize group to one of: 'photoshoots' or 'brand'
+          const g = (p.group || "").toLowerCase().trim();
+          if (g.includes("photo")) p.group = "photoshoots";
+          else if (g.includes("brand")) p.group = "brand";
+          else p.group = "brand"; // fallback so items are not lost
+          
+          p.src = fixPathByGroup(p.src, p.group);
+        });
+
+        // Sort (lowest order first)
+        data.photos.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+        const card = (p) => `
         <figure class="grid-item ratio-4-5 reveal">
           <img
             src="${p.src}"
@@ -136,83 +160,84 @@
         </figure>
       `;
 
-      // Split into sections by normalized group
-      const ps = data.photos.filter((p) => p.group === "photoshoots");
-      const bs = data.photos.filter((p) => p.group === "brand");
+        // Split into sections by normalized group
+        const ps = data.photos.filter((p) => p.group === "photoshoots");
+        const bs = data.photos.filter((p) => p.group === "brand");
 
-      // Insert into the two grids
-      const psGrid = document.getElementById("grid-photoshoots");
-      const bsGrid = document.getElementById("grid-brand");
+        // Insert into the two grids
+        const psGrid = document.getElementById("grid-photoshoots");
+        const bsGrid = document.getElementById("grid-brand");
 
-      // Fallback: if both empty (unexpected), show everything under Photoshoots
-      if (psGrid && (ps.length || (!ps.length && !bs.length))) {
-        psGrid.innerHTML = (ps.length ? ps : data.photos).map(card).join("");
-        psGrid.setAttribute("data-hydrated", "true");
+        // Fallback: if both empty (unexpected), show everything under Photoshoots
+        if (psGrid && (ps.length || (!ps.length && !bs.length))) {
+          psGrid.innerHTML = (ps.length ? ps : data.photos).map(card).join("");
+          psGrid.setAttribute("data-hydrated", "true");
+        }
+        if (bsGrid && bs.length) {
+          bsGrid.innerHTML = bs.map(card).join("");
+          psGrid.setAttribute("data-hydrated", "true");
+        }
+
+        // Lightbox for injected images (local to this page)
+        const imgs = Array.from(document.querySelectorAll(".grid-item img"));
+        const box = document.getElementById("lightbox");
+        const boxImg = document.getElementById("lightbox-img");
+        const prev = box?.querySelector(".lightbox-prev");
+        const next = box?.querySelector(".lightbox-next");
+        const closeBtn = box?.querySelector(".lightbox-close");
+
+        let idx = 0;
+
+        function open(i) {
+          idx = i;
+          const el = imgs[idx];
+          boxImg.src = el.src;
+          boxImg.alt = el.alt || "";
+          box.classList.add("open");
+          box.setAttribute("aria-hidden", "false");
+        }
+
+        function close() {
+          box.classList.remove("open");
+          box.setAttribute("aria-hidden", "true");
+        }
+
+        function step(d) {
+          idx = (idx + d + imgs.length) % imgs.length;
+          const el = imgs[idx];
+          boxImg.src = el.src;
+          boxImg.alt = el.alt || "";
+        }
+
+        imgs.forEach((img, i) => img.addEventListener("click", () => open(i)));
+        closeBtn?.addEventListener("click", close);
+        box?.addEventListener("click", (e) => {
+          if (e.target === box) close();
+        });
+        prev?.addEventListener("click", () => step(-1));
+        next?.addEventListener("click", () => step(1));
+        window.addEventListener("keydown", (e) => {
+          if (!box.classList.contains("open")) return;
+          if (e.key === "Escape") close();
+          if (e.key === "ArrowLeft") step(-1);
+          if (e.key === "ArrowRight") step(1);
+        });
+
+        // Ensure reveal items aren’t left hidden
+        document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in-view"));
+
+        // Debug counts (optional): see matches in Console
+        console.log("Gallery loaded:", {
+          total: data.photos.length,
+          photoshoots: ps.length,
+          brand: bs.length
+        });
+      } catch (e) {
+        console.error("Gallery load error", e);
       }
-      if (bsGrid && bs.length) {
-        bsGrid.innerHTML = bs.map(card).join("");
-        psGrid.setAttribute("data-hydrated", "true");
-      }
-
-      // Lightbox for injected images (local to this page)
-      const imgs = Array.from(document.querySelectorAll(".grid-item img"));
-      const box = document.getElementById("lightbox");
-      const boxImg = document.getElementById("lightbox-img");
-      const prev = box?.querySelector(".lightbox-prev");
-      const next = box?.querySelector(".lightbox-next");
-      const closeBtn = box?.querySelector(".lightbox-close");
-
-      let idx = 0;
-
-      function open(i) {
-        idx = i;
-        const el = imgs[idx];
-        boxImg.src = el.src;
-        boxImg.alt = el.alt || "";
-        box.classList.add("open");
-        box.setAttribute("aria-hidden", "false");
-      }
-
-      function close() {
-        box.classList.remove("open");
-        box.setAttribute("aria-hidden", "true");
-      }
-
-      function step(d) {
-        idx = (idx + d + imgs.length) % imgs.length;
-        const el = imgs[idx];
-        boxImg.src = el.src;
-        boxImg.alt = el.alt || "";
-      }
-
-      imgs.forEach((img, i) => img.addEventListener("click", () => open(i)));
-      closeBtn?.addEventListener("click", close);
-      box?.addEventListener("click", (e) => {
-        if (e.target === box) close();
-      });
-      prev?.addEventListener("click", () => step(-1));
-      next?.addEventListener("click", () => step(1));
-      window.addEventListener("keydown", (e) => {
-        if (!box.classList.contains("open")) return;
-        if (e.key === "Escape") close();
-        if (e.key === "ArrowLeft") step(-1);
-        if (e.key === "ArrowRight") step(1);
-      });
-
-      // Ensure reveal items aren’t left hidden
-      document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in-view"));
-
-      // Debug counts (optional): see matches in Console
-      console.log("Gallery loaded:", {
-        total: data.photos.length,
-        photoshoots: ps.length,
-        brand: bs.length
-      });
-    } catch (e) {
-      console.error("Gallery load error", e);
-    }
-  })();
-</script>
-<script src="js/main.js?v=2" defer></script>
+    })();
+  </script>
+  <script src="js/main.js?v=2" defer></script>
 </body>
+
 </html>
