@@ -15,6 +15,10 @@
     {
       "group": "brand",
       "src": "/assets/gallery/p6.png"
+    },
+    {
+      "group": "photoshoots",
+      "src": "/assets/gallery/p2.png"
     }
   ]
 }
