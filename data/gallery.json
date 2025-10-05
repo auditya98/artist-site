@@ -1,4 +1,8 @@
 {
   "photoshoots": [],
-  "brand": []
+  "brand": [
+    {
+      "src": "/assets/gallery/brand-shoots/bs7.png"
+    }
+  ]
 }
