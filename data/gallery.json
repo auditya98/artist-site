@@ -5,6 +5,12 @@
     },
     {
       "src": "/assets/gallery/photoshoots/bs7.png"
+    },
+    {
+      "src": "/assets/gallery/photoshoots/bs6.png",
+      "alt": "",
+      "caption": "",
+      "order": 2
     }
   ],
   "brand": [
