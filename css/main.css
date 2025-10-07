@@ -489,20 +489,29 @@ html[data-theme="dark"] .about-text p {color: #e5e7eb;}
 html[data-theme="dark"] .stats strong {color: #f5f6fb;}
 html[data-theme="dark"] .stats h2 {color: #a9afba;}
 
-html[data-theme="light"] .socials a{
-  color: #0a0b0d !important;
-  opacity: 0.95;
-  text-decoration: none;
+/* === FINAL OVERRIDE: keep social icons white in all themes === */
+html[data-theme="light"] .socials a,
+html[data-theme="dark"] .socials a,
+html[data-theme="light"] .socials svg,
+html[data-theme="dark"] .socials svg {
+  color: #ffffff !important;
+  opacity: 0.9 !important;
+  text-decoration: none !important;
 }
 
-html[data-theme="light"] .socials a:hover{
-  color: #111111 !important;
-  text-decoration: underline;
+html[data-theme="light"] .socials a:hover,
+html[data-theme="dark"] .socials a:hover {
+  opacity: 1 !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
 }
 
-html[data-theme="light"] .socials svg{
-  color: #0a0b0d;
+.socials svg {
+  color: #ffffff !important;
+  transition: color 0.3s ease, opacity 0.3s ease;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25)); /* keeps contrast on bright bg */
 }
+
 
 .grid[data-hydrated="false"]{
   visibility: hidden;
