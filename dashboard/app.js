@@ -302,9 +302,9 @@ async function saveChanges() {
     setDirty(false);
     toast("Saved ✓", "ok");
 
-    // reload json from origin to reflect published paths
-    await loadJson();
+    // Show local preview until Netlify redeploy finishes
     renderGrid();
+    toast("Changes saved! Images will appear after deploy.", "ok");
 }
 
 // ======== BOOT ========
