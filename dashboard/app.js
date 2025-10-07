@@ -317,9 +317,12 @@ async function boot() {
     document.querySelectorAll(".tab").forEach(b => {
         b.addEventListener("click", () => switchTab(b.dataset.tab));
     });
+    // File upload button
     $("#fileInput").addEventListener("change", e => {
         const files = e.target.files;
-        queueFiles(files, state.json.photoshoots, "photoshoots");
+        const targetList = state.tab === "brand" ? state.json.brand : state.json.photoshoots;
+        const targetType = state.tab === "brand" ? "brand" : "photoshoots";
+        queueFiles(files, targetList, targetType);
     });
     $("#saveBtn").addEventListener("click", () => saveChanges().catch(err => { toast(err.message, "err"); $("#saveBtn").disabled = false; }));
 
@@ -329,7 +332,11 @@ async function boot() {
     ["dragleave", "drop"].forEach(evt => dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.remove("drag"); }));
     dz.addEventListener("drop", e => {
         const files = [...(e.dataTransfer?.files || [])].filter(f => f.type.startsWith("image/"));
-        if (files.length) queueFiles(files, state.json.photoshoots, "photoshoots");
+        if (files.length) {
+            const targetList = state.tab === "brand" ? state.json.brand : state.json.photoshoots;
+            const targetType = state.tab === "brand" ? "brand" : "photoshoots";
+            queueFiles(files, targetList, targetType);
+        }
     });
 
     // Netlify Identity events
