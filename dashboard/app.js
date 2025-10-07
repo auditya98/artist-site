@@ -223,29 +223,31 @@ function switchTab(tab) {
 
 // ======== UPLOAD HANDLING ========
 async function queueFiles(files, list, type) {
-    for (const file of files) {
-        // Generate local blob URL for preview (no 404s)
-        const previewUrl = URL.createObjectURL(file);
-        const realPath = `/assets/gallery/${type}/${file.name}`;
+  for (const file of files) {
+    const realPath = type === "brand"
+      ? `/assets/gallery/brand-shoots/${file.name}`
+      : `/assets/gallery/photoshoots/${file.name}`;
 
-        // Store both preview and commit info
-        list.push({
-            src: previewUrl,
-            _realPath: realPath,
-            alt: "",
-            caption: "",
-            order: list.length
-        });
+    // Generate local blob preview
+    const previewUrl = URL.createObjectURL(file);
 
-        // Queue this file for Git commit
-        const base64 = await toBase64(file);
-        state.queueUploads.push({ file, path: realPath, base64 });
-    }
+    list.push({
+      src: previewUrl,
+      _realPath: realPath,
+      alt: "",
+      caption: "",
+      order: list.length
+    });
 
-    // Refresh grid to show preview and enable Save button
-    renderGrid();
-    setDirty();
+    // Convert to base64 for Git commit
+    const base64 = await toBase64(file);
+    state.queueUploads.push({ file, path: realPath, base64 });
+  }
+
+  renderGrid();
+  setDirty();
 }
+
 
 
 // ======== SAVE (COMMIT) ========
