@@ -223,91 +223,100 @@ function switchTab(tab) {
 
 // ======== UPLOAD HANDLING ========
 async function queueFiles(files, list, type) {
-  for (const file of files) {
-    const realPath = type === "brand"
-      ? `/assets/gallery/brand-shoots/${file.name}`
-      : `/assets/gallery/photoshoots/${file.name}`;
+    for (const file of files) {
+        // Use correct folder for brand vs photoshoots
+        const realPath = type === "brand"
+            ? `/assets/gallery/brand-shoots/${file.name}`
+            : `/assets/gallery/photoshoots/${file.name}`;
 
-    // Generate local blob preview
-    const previewUrl = URL.createObjectURL(file);
+        // Create local blob URL for instant preview
+        const previewUrl = URL.createObjectURL(file);
 
-    list.push({
-      src: previewUrl,
-      _realPath: realPath,
-      alt: "",
-      caption: "",
-      order: list.length
-    });
+        // Add new card to list
+        list.push({
+            src: previewUrl,       // shown immediately
+            _realPath: realPath,   // actual CDN path used for commit
+            alt: "",
+            caption: "",
+            order: list.length
+        });
 
-    // Convert to base64 for Git commit
-    const base64 = await toBase64(file);
-    state.queueUploads.push({ file, path: realPath, base64 });
-  }
+        // Convert file to base64 for Git commit
+        const base64 = await toBase64(file);
+        state.queueUploads.push({ file, path: realPath, base64 });
+    }
 
-  renderGrid();
-  setDirty();
+    // Refresh grid and enable Save button
+    renderGrid();
+    setDirty();
 }
 
 
 
 // ======== SAVE (COMMIT) ========
 async function saveChanges() {
-    // Before creating blobs
-    for (const type of ["photoshoots", "brand"]) {
-        state.json[type].forEach(item => {
-            if (item._realPath) item.src = item._realPath;
-            delete item._realPath;
-        });
-    }
-    requireLogin();
-    $("#saveBtn").disabled = true;
+    try {
+        requireLogin();
+        $("#saveBtn").disabled = true;
 
-    // 1) refresh head + tree
-    const headSha = await getHeadRef();
-    const headCommit = await getCommit(headSha);
-    const baseTreeSha = headCommit.tree.sha;
+        /*************** STEP 1: prepare JSON for commit ***************/
+        // Deep copy of state.json so we can keep blob previews on UI
+        const commitData = JSON.parse(JSON.stringify(state.json));
+        for (const type of ["photoshoots", "brand"]) {
+            commitData[type].forEach(item => {
+                if (item._realPath) item.src = item._realPath;
+                delete item._realPath;
+            });
+        }
 
-    // 2) create blobs for any queued uploads
-    const treeEntries = [];
-    for (const u of state.queueUploads) {
-        const blob = await createBlob(u.base64);
+        /*************** STEP 2: get current repo state ***************/
+        const headSha = await getHeadRef();
+        const headCommit = await getCommit(headSha);
+        const baseTreeSha = headCommit.tree.sha;
+
+        /*************** STEP 3: upload new image blobs ***************/
+        const treeEntries = [];
+        for (const u of state.queueUploads) {
+            const blob = await createBlob(u.base64);
+            treeEntries.push({
+                path: u.path.replace(/^\//, ""), // remove leading slash
+                mode: "100644",
+                type: "blob",
+                sha: blob.sha
+            });
+        }
+
+        /*************** STEP 4: upload updated gallery.json ***************/
+        const newJsonStr = JSON.stringify(commitData, null, 2);
+        const encoded = btoa(unescape(encodeURIComponent(newJsonStr)));
+        const newJsonBlob = await createBlob(encoded);
         treeEntries.push({
-            path: u.path.replace(/^\//, ""), // GHA expects no leading slash in path
+            path: DATA_PATH.replace(/^\//, ""),
             mode: "100644",
             type: "blob",
-            sha: blob.sha
+            sha: newJsonBlob.sha
         });
+
+        /*************** STEP 5: create commit and push ***************/
+        const newTree = await createTree(baseTreeSha, treeEntries);
+        const msg = `Dashboard: update ${state.tab} (${new Date().toISOString()})`;
+        const commit = await createCommit(msg, newTree.sha, headSha);
+        await updateRef(commit.sha);
+
+        /*************** STEP 6: cleanup & UI feedback ***************/
+        state.queueUploads = [];
+        setDirty(false);
+        toast("✅ Saved! Images will update after Netlify redeploy.", "ok");
+
+        // Keep blob previews visible instead of reloading stale JSON
+        renderGrid();
+
+    } catch (err) {
+        toast(err.message || "Save failed", "err");
+        $("#saveBtn").disabled = false;
     }
-
-    // 3) update gallery.json content
-    const newJsonStr = JSON.stringify(state.json, null, 2);
-    const newJsonBlob = await createBlob(btoa(unescape(encodeURIComponent(newJsonStr))));
-    treeEntries.push({
-        path: DATA_PATH.replace(/^\//, ""),
-        mode: "100644",
-        type: "blob",
-        sha: newJsonBlob.sha
-    });
-
-    // 4) create tree from base
-    const newTree = await createTree(baseTreeSha, treeEntries);
-
-    // 5) create commit
-    const msg = `Dashboard: update ${state.tab} (${new Date().toISOString()})`;
-    const commit = await createCommit(msg, newTree.sha, headSha);
-
-    // 6) update ref
-    await updateRef(commit.sha);
-
-    // 7) cleanup
-    state.queueUploads = [];
-    setDirty(false);
-    toast("Saved ✓", "ok");
-
-    // Show local preview until Netlify redeploy finishes
-    renderGrid();
-    toast("Changes saved! Images will appear after deploy.", "ok");
 }
+
 
 // ======== BOOT ========
 async function boot() {
